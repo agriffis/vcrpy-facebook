@@ -81,7 +81,7 @@ class MultiPartFormData(object):
         return CRNL + b'--' + self.boundary + b'--' + CRNL
 
     def find(self, key):
-        name = b'; name="{}"'.format(key)
+        name = b'; name="{0}"'.format(key)
         for i, p in enumerate(self.parts):
             if name in p.header:
                 return i

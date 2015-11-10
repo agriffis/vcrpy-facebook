@@ -79,7 +79,7 @@ class QueryParser(BaseParser):
         )
 
     def _unparse(self, parsed, raw):
-        return '&'.join('{}={}'.format(quote(k), quote(v))
+        return '&'.join('{0}={1}'.format(quote(k), quote(v))
                         for k, v in parsed.items())
 
 
@@ -91,7 +91,7 @@ class UrlParser(QueryParser):
 
     def _unparse(self, parsed, raw):
         q = super(UrlParser, self)._unparse(parsed, raw)
-        return '{}{}{}'.format(self.__base, '?' if q else '', q)
+        return '{0}{1}{2}'.format(self.__base, '?' if q else '', q)
 
 
 class MultipartParser(BaseParser):

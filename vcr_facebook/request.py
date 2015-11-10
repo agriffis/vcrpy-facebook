@@ -99,7 +99,7 @@ def filter_multipart_boundary(request):
     prefix, equals, boundary = content_type.partition('=')
     if boundary and prefix == 'multipart/form-data; boundary':
         boundary = MULTIPART_BOUNDARY[:len(boundary)]
-        request.headers['content-type'] = b'{}={}'.format(prefix, boundary)
+        request.headers['content-type'] = b'{0}={1}'.format(prefix, boundary)
         def filter(parts):
             assert len(parts.boundary) == len(boundary)
             parts.boundary = boundary
