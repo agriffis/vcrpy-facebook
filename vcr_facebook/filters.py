@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
-from collections import OrderedDict, MutableMapping
+from collections import MutableMapping
 from functools import wraps
 import hashlib
 import json
@@ -8,14 +8,7 @@ import logging
 import re
 import zlib
 
-try:
-    # python 3
-    from urllib.parse import parse_qsl, quote
-except ImportError:
-    # python 2
-    from urllib import quote
-    from urlparse import parse_qsl
-
+from .compat import OrderedDict, parse_qsl, quote
 from . import multipart
 
 

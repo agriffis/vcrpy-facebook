@@ -1,20 +1,12 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
-from collections import OrderedDict
 from functools import wraps
 import hashlib
 import logging
 import re
 import zlib
 
-try:
-    # python 3
-    from urllib.parse import parse_qsl, quote
-except ImportError:
-    # python 2
-    from urllib import quote
-    from urlparse import parse_qsl
-
+from .compat import OrderedDict, parse_qsl, quote
 from .filters import (make_batch_relative_url_filter, make_multipart_filter, make_query_filter,
                       make_elider_with_fallback)
 from .util import always_return

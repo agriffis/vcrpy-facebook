@@ -6,14 +6,19 @@ from __future__ import absolute_import, unicode_literals
 from setuptools import setup, find_packages
 from codecs import open
 import os
+import sys
 
 here = os.path.dirname(__file__)
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+install_requires = ['vcrpy']
+if sys.version_info < (2 , 7):
+    install_requires.append('ordereddict')
+
 setup(
     name='vcrpy-facebook',
-    version='0.1.3',
+    version='0.1',
     description='Facebook filters for vcr.py',
     long_description=long_description,
     url='https://github.com/agriffis/vcrpy-facebook',
@@ -29,6 +34,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
@@ -36,5 +42,5 @@ setup(
     ],
     keywords='vcrpy vcr.py facebook testing mock http'.split(),
     packages=find_packages(exclude=['tests']),
-    install_requires=['vcrpy'],
+    install_requires=install_requires,
 )
