@@ -25,10 +25,9 @@ def wrap_before_record(wrapped, **kwargs):
     return wrapper
 
 
-def make_before_record(elide_appsecret_proof=None,
-                       elide_access_token=None,
-                       elide_client_secret=None,
-                       **kwargs):
+def make_before_record(elide_appsecret_proof,
+                       elide_access_token,
+                       elide_client_secret):
 
     def _filter_body(body):
         appsecret_proof_filter = make_elider_with_fallback(
