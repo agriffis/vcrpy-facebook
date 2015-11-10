@@ -117,9 +117,9 @@ details.
 .. _vcrpy-unittest: https://github.com/agriffis/vcrpy-unittest
 .. _django-allauth: http://www.intenct.nl/projects/django-allauth/
 
-.. |Build Status| image:: https://travis-ci.org/agriffis/vcrpy-facebook.svg?branch=master
+.. |Build Status| image:: https://img.shields.io/travis/agriffis/vcrpy-facebook/master.svg?style=plastic
    :target: https://travis-ci.org/agriffis/vcrpy-facebook?branch=master
-.. |Coverage Report| image:: https://img.shields.io/coveralls/agriffis/vcrpy-facebook/master.svg
+.. |Coverage Report| image:: https://img.shields.io/coveralls/agriffis/vcrpy-facebook/master.svg?style=plastic
    :target: https://coveralls.io/github/agriffis/vcrpy-facebook?branch=master
 .. |PyPI| image:: https://img.shields.io/pypi/v/vcrpy-facebook.svg?style=plastic
    :target: PyPI_
