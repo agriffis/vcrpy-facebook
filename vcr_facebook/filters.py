@@ -112,7 +112,8 @@ class BatchParser(BaseParser):
         return json.dumps(parsed, sort_keys=True, separators=(',', ':'))
 
 
-def make_filter(filter, parser_class, **kwargs):
+
+def make_parsed_filter(filter, parser_class, **kwargs):
     @wraps(filter)
     def wrapper(raw):
         data = parser_class(raw, **kwargs)
@@ -124,15 +125,15 @@ def make_filter(filter, parser_class, **kwargs):
 
 
 def make_query_filter(filter, **kwargs):
-    return make_filter(filter, QueryParser, **kwargs)
+    return make_parsed_filter(filter, QueryParser, **kwargs)
 
 
 def make_url_filter(filter, **kwargs):
-    return make_filter(filter, UrlParser, **kwargs)
+    return make_parsed_filter(filter, UrlParser, **kwargs)
 
 
 def make_multipart_filter(filter, **kwargs):
-    return make_filter(filter, MultipartParser, **kwargs)
+    return make_parsed_filter(filter, MultipartParser, **kwargs)
 
 
 def make_elider_filter(key, fun, prefix):
