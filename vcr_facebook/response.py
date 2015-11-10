@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
-from functools import wraps
 import logging
 import re
 import zlib
@@ -14,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 def wrap_before_record_response(wrapped, **kwargs):
     before_record_response = make_before_record_response(**kwargs)
-    @wraps(wrapped)
     def wrapper(response):
         response = before_record_response(response)
         response = wrapped(response)

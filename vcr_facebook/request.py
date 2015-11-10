@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
-from functools import wraps
 import hashlib
 import logging
 import re
@@ -18,7 +17,6 @@ logger = logging.getLogger(__name__)
 def wrap_before_record(wrapped, **kwargs):
     logger.debug("wrapping before_record")
     before_record = make_before_record(**kwargs)
-    @wraps(wrapped)
     def wrapper(request):
         logger.debug("in before_record wrapper")
         request = before_record(request)
