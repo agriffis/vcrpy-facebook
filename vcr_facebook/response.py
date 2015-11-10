@@ -1,11 +1,13 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
+import collections
+import json
 import logging
 import re
 import zlib
 
 from .compat import OrderedDict, parse_qsl, quote
-from .util import always_return
+from .filters import fallback_elider
 
 
 logger = logging.getLogger(__name__)
@@ -28,8 +30,9 @@ def make_before_record_response(elide_access_token,
             return response
 
         response = ungzip(response)
-        # replace top-level stuff
-        # replace batch stuff
+        response = filter_access_tokens(
+            response, elide_access_token, elider_prefix)
+        response = update_content_length(response)
         return response
     return before_record_response
 
@@ -42,9 +45,54 @@ def ungzip(response):
         headers['content-encoding'].remove('gzip')
         if not headers['content-encoding']:
             del headers['content-encoding']
-        response = update_content_length(response)
 
     return response
+
+
+def filter_access_tokens(response,
+                         elide_access_token,
+                         elider_prefix):
+
+    # One approach would be to detect batch responses, then branch
+    # accordingly. Either know in advance all the places that access tokens
+    # can appear, or use something like jsonpath-rw to find them. But in
+    # fact access tokens only appear in two forms in the JSON response:
+    #
+    #   "access_token":"..."  in JSON
+    #   access_token=...      in paging URLs
+    #
+    # so it's much easier to use regular expression matching.
+
+    # Decode so unicode patterns can operate on the body.
+    body = response['body']['string'].decode('utf-8')
+
+    body = re.sub(
+        r'"access_token":\s*"([^"]+)"',
+        lambda m: '"access_token":"{0}"'.format(
+            elide(m.group(1), elide_access_token, elider_prefix)),
+        body,
+    )
+
+    body = re.sub(
+        r'access_token=([^&"]+)',
+        lambda m: 'access_token={0}'.format(
+            elide(m.group(1), elide_access_token, elider_prefix)),
+        body,
+    )
+
+    response['body']['string'] = body.encode('utf-8')
+    return response
+
+
+def elide(orig, fun, prefix):
+    if prefix and orig.startswith(prefix):
+        return orig
+    value = None
+    if fun:
+        value = fun(orig)
+    if not value:
+        value = fallback_elider(orig)
+    return prefix + value
 
 
 def update_content_length(response):
