@@ -1,7 +1,7 @@
 vcrpy-facebook
 ==============
 
-|Build Status| |Coverage Report|
+|Build Status| |Coverage Report| |PyPI| |Gitter|
 
 This package provides filters for eliding sensitive data in HTTP transactions
 with Facebook recorded with `VCR.py`_.
@@ -121,3 +121,7 @@ details.
    :target: https://travis-ci.org/agriffis/vcrpy-facebook?branch=master
 .. |Coverage Report| image:: https://img.shields.io/coveralls/agriffis/vcrpy-facebook/master.svg
    :target: https://coveralls.io/github/agriffis/vcrpy-facebook?branch=master
+.. |PyPI| image:: https://img.shields.io/pypi/v/vcrpy-facebook.svg?style=plastic
+   :target: PyPI_
+.. |Gitter| image:: https://img.shields.io/badge/gitter-join%20chat%20%E2%86%92-green.svg?style=plastic
+   :target: https://gitter.im/kevin1024/vcrpy
