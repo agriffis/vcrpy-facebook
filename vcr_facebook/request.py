@@ -7,7 +7,7 @@ import zlib
 
 from .compat import OrderedDict, parse_qsl, quote
 from .filters import (make_batch_relative_url_filter, make_multipart_filter, make_query_filter,
-                      make_elider_with_fallback)
+                      make_elider_filter)
 from .util import always_return
 
 
@@ -15,10 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 def wrap_before_record(wrapped, **kwargs):
-    logger.debug("wrapping before_record")
     before_record = make_before_record(**kwargs)
     def wrapper(request):
-        logger.debug("in before_record wrapper")
         request = before_record(request)
         request = wrapped(request)
         return request
@@ -27,19 +25,29 @@ def wrap_before_record(wrapped, **kwargs):
 
 def make_before_record(elide_appsecret_proof,
                        elide_access_token,
-                       elide_client_secret):
+                       elide_client_secret,
+                       elider_prefix):
 
     def _filter_body(body):
-        appsecret_proof_filter = make_elider_with_fallback(
-            'appsecret_proof', elide_appsecret_proof and (
+        appsecret_proof_filter = make_elider_filter(
+            'appsecret_proof',
+            elide_appsecret_proof and (
                 lambda q: elide_appsecret_proof(q['appsecret_proof'],
-                                                q['access_token'])))
-        access_token_filter = make_elider_with_fallback(
-            'access_token', elide_access_token and (
-                lambda q: elide_access_token(q['access_token'])))
-        client_secret_filter = make_elider_with_fallback(
-            'client_secret', elide_client_secret and (
-                lambda q: elide_client_secret(q['client_secret'])))
+                                                q['access_token'])),
+            elider_prefix,
+        )
+        access_token_filter = make_elider_filter(
+            'access_token',
+            elide_access_token and (
+                lambda q: elide_access_token(q['access_token'])),
+            elider_prefix,
+        )
+        client_secret_filter = make_elider_filter(
+            'client_secret',
+            elide_client_secret and (
+                lambda q: elide_client_secret(q['client_secret'])),
+            elider_prefix,
+        )
         filters = [
             make_multipart_filter(filter_uploads),
             make_batch_relative_url_filter(appsecret_proof_filter),

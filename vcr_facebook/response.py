@@ -20,7 +20,8 @@ def wrap_before_record_response(wrapped, **kwargs):
     return wrapper
 
 
-def make_before_record_response(elide_access_token):
+def make_before_record_response(elide_access_token,
+                                elider_prefix):
 
     def before_record_response(response):
         if 'facebook-api-version' not in response['headers']:

@@ -8,7 +8,8 @@ from .util import identity
 def get_vcr_kwargs(vcr_kwargs=None,
                    elide_appsecret_proof=None,
                    elide_access_token=None,
-                   elide_client_secret=None):
+                   elide_client_secret=None,
+                   elider_prefix='XXX-'):
 
     if vcr_kwargs is None:
         vcr_kwargs = {}
@@ -17,10 +18,12 @@ def get_vcr_kwargs(vcr_kwargs=None,
         elide_appsecret_proof=elide_appsecret_proof,
         elide_access_token=elide_access_token,
         elide_client_secret=elide_client_secret,
+        elider_prefix=elider_prefix,
     )
 
     make_before_record_response_kwargs = dict(
         elide_access_token=elide_access_token,
+        elider_prefix=elider_prefix,
     )
 
     return dict(

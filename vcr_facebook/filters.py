@@ -135,15 +135,22 @@ def make_multipart_filter(filter, **kwargs):
     return make_filter(filter, MultipartParser, **kwargs)
 
 
-def make_elider_with_fallback(key, elide):
-    def filter(q):
-        if key in q:
-            value = elide(q) if elide else None
+def make_elider_filter(key, fun, prefix):
+    def filter(data):
+        if key in data and (not prefix or
+                            not data[key].startswith(prefix)):
+            value = fun(data) if fun else None
             if not value:
-                value = 'ELIDED-{}'.format(hashlib.md5(q[key]).hexdigest())
-            q[key] = value
-        return q
+                value = fallback_elider(data[key])
+            data[key] = prefix + value
+        return data
     return filter
+
+
+def fallback_elider(orig):
+    if not isinstance(orig, bytes):
+        orig = orig.encode('utf-8')
+    return hashlib.md5(orig).hexdigest()
 
 
 def make_batch_relative_url_filter(filter, **kwargs):
