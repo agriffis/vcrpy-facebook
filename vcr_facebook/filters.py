@@ -109,7 +109,7 @@ class BatchParser(BaseParser):
         return json.loads(raw)
 
     def _unparse(self, parsed, raw):
-        return json.dumps(parsed, sort_keys=True, separators=(',', ':'))
+        return json.dumps(parsed, sort_keys=True, separators=',:')
 
 
 

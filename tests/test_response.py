@@ -54,9 +54,8 @@ def mock_response(headers, data):
     return {
         'headers': headers,
         'body': {
-            'string': json.dumps(data,
-                                 sort_keys=True,
-                                 separators=(',', ':')).encode('utf-8'),
+            'string': json.dumps(data, sort_keys=True,
+                                 separators=',:').encode('utf-8'),
         },
     }
 
