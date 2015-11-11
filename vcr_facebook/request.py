@@ -87,7 +87,7 @@ def make_before_record(elide_appsecret_proof,
             return request
         request.body = _filter_body(request.body)
         request.headers = _filter_headers(request.headers)
-        request.url = _filter_url(request.url)
+        request.uri = _filter_url(request.uri)
         request = filter_multipart_boundary(request)
         return request
     return before_record
