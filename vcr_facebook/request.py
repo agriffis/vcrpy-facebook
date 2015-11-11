@@ -7,7 +7,7 @@ import zlib
 
 from .compat import OrderedDict, parse_qsl, quote
 from .filters import (make_batch_relative_url_filter, make_multipart_filter, make_query_filter,
-                      make_elider_filter)
+                      make_url_filter, make_elider_filter)
 from .util import always_return
 
 
@@ -28,26 +28,29 @@ def make_before_record(elide_appsecret_proof,
                        elide_client_secret,
                        elider_prefix):
 
+    appsecret_proof_filter = make_elider_filter(
+        'appsecret_proof',
+        elide_appsecret_proof and (
+            lambda q: elide_appsecret_proof(q['appsecret_proof'],
+                                            q['access_token'])),
+        elider_prefix,
+    )
+
+    access_token_filter = make_elider_filter(
+        'access_token',
+        elide_access_token and (
+            lambda q: elide_access_token(q['access_token'])),
+        elider_prefix,
+    )
+
+    client_secret_filter = make_elider_filter(
+        'client_secret',
+        elide_client_secret and (
+            lambda q: elide_client_secret(q['client_secret'])),
+        elider_prefix,
+    )
+
     def _filter_body(body):
-        appsecret_proof_filter = make_elider_filter(
-            'appsecret_proof',
-            elide_appsecret_proof and (
-                lambda q: elide_appsecret_proof(q['appsecret_proof'],
-                                                q['access_token'])),
-            elider_prefix,
-        )
-        access_token_filter = make_elider_filter(
-            'access_token',
-            elide_access_token and (
-                lambda q: elide_access_token(q['access_token'])),
-            elider_prefix,
-        )
-        client_secret_filter = make_elider_filter(
-            'client_secret',
-            elide_client_secret and (
-                lambda q: elide_client_secret(q['client_secret'])),
-            elider_prefix,
-        )
         filters = [
             make_multipart_filter(filter_uploads),
             make_batch_relative_url_filter(appsecret_proof_filter),
@@ -69,18 +72,23 @@ def make_before_record(elide_appsecret_proof,
             del headers['content-length']
         return headers
 
+    def _filter_url(url):
+        filters = [
+            make_url_filter(appsecret_proof_filter),
+            make_url_filter(access_token_filter),
+            make_url_filter(client_secret_filter),
+        ]
+        for f in filters:
+            url = f(url)
+        return url
+
     def before_record(request):
         if request.host != 'graph.facebook.com':
             return request
-
-        # This check avoids running everything twice, since vcrpy calls for
-        # can_play_response_for() as well as actually looking up the response.
-        # This should really be fixed in vcrpy.
-        if 'x-vcrpy' not in request.headers:
-            request.body = _filter_body(request.body)
-            request.headers = _filter_headers(request.headers)
-            request = filter_multipart_boundary(request)
-            request.headers['x-vcrpy'] = 'VCR.py was here'
+        request.body = _filter_body(request.body)
+        request.headers = _filter_headers(request.headers)
+        request.url = _filter_url(request.url)
+        request = filter_multipart_boundary(request)
         return request
     return before_record
 
