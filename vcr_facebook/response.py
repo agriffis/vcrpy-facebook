@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
 import collections
+import copy
 import json
 import logging
 import re
@@ -28,6 +29,15 @@ def make_before_record_response(elide_access_token,
     def before_record_response(response):
         if 'facebook-api-version' not in response['headers']:
             return response
+
+        # The response at this point is both (1) what will be recorded, and
+        # (2) what will be returned to the application. The problem is that a
+        # test needs to run through with the original responses the first time,
+        # so that paging links with embedded access tokens are still valid.
+        # Later when the test replays in full, the elided tokens will match
+        # from the response and the request for the next page, but the first
+        # time we have to be careful not to break the paging links.
+        response = copy.deepcopy(response)
 
         response = ungzip(response)
         response = filter_access_tokens(
