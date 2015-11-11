@@ -97,7 +97,7 @@ class MockRequest(object):
     def __init__(self, url, method='GET', headers=None, body=''):
         default_headers = get_request_headers()
         default_headers.update(headers or {})
-        self.url = url
+        self.uri = url
         self.method = method
         self.headers = default_headers
         self.body = body
@@ -106,12 +106,15 @@ class MockRequest(object):
     def __eq__(self, other):
         return vars(self) == vars(other)
     def __getattr__(self, name):
-        if name != 'url':
-            return getattr(urlsplit(self.url), name)
+        if name != 'uri':
+            return getattr(urlsplit(self.uri), name)
         raise AttributeError
     @property
     def host(self):
         return self.hostname
+    @property
+    def url(self):
+        return self.uri
 
 
 def get_request_headers():
