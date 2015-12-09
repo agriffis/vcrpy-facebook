@@ -53,8 +53,8 @@ If you're using `vcrpy-unittest`_ then it works like this:
 
     class MyTestCase(vcr_unittest.VCRTestCase):
 
-        def _get_vcr_kwargs(self):
-            kwargs = super(MyTestCase, self)._get_vcr_kwargs()
+        def _get_vcr_kwargs(self, **kwargs):
+            kwargs = super(MyTestCase, self)._get_vcr_kwargs(**kwargs)
             kwargs = vcr_facebook.get_vcr_kwargs(kwargs)
             return kwargs
 
@@ -68,7 +68,7 @@ elide_access_token
 ~~~~~~~~~~~~~~~~~~
 
 By default ``vcrpy-facebook`` replaces tokens with a string like
-``ELIDED-d41d8cd98f00b204e9800998ecf8427e`` where the right side is the md5 hex
+``XXX-d41d8cd98f00b204e9800998ecf8427e`` where the right side is the md5 hex
 digest of the elided token.
 
 Pass a callable as ``elide_access_token`` to customize how Facebook access
@@ -88,7 +88,7 @@ elide_appsecret_proof
 ~~~~~~~~~~~~~~~~~~~~~
 
 By default ``vcrpy-facebook`` replaces appsecret_proof with a string like
-``ELIDED-d41d8cd98f00b204e9800998ecf8427e`` where the right side is the md5 hex
+``XXX-d41d8cd98f00b204e9800998ecf8427e`` where the right side is the md5 hex
 digest of the elided proof.
 
 Pass a callable as ``elide_appsecret_proof`` to customize how the proof is
