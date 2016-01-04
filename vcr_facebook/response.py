@@ -76,17 +76,23 @@ def filter_access_tokens(response,
     # Decode so unicode patterns can operate on the body.
     body = response['body']['string'].decode('utf-8')
 
+    # Variable-length escapes here handle nested JSON for batch responses.
     body = re.sub(
-        r'"access_token":\s*"([^"]+)"',
-        lambda m: '"access_token":"{0}"'.format(
-            elide(m.group(1), elide_access_token, elider_prefix)),
+        r'((\\*")access_token\2:\s*\2)([^\\"]+)\2',
+        lambda m: ''.join([
+            m.group(1),
+            elide(m.group(3), elide_access_token, elider_prefix),
+            m.group(2),
+        ]),
         body,
     )
 
     body = re.sub(
-        r'access_token=([^&"]+)',
-        lambda m: 'access_token={0}'.format(
-            elide(m.group(1), elide_access_token, elider_prefix)),
+        r'(access_token=)([^\\&"]+)',
+        lambda m: ''.join([
+            m.group(1),
+            elide(m.group(2), elide_access_token, elider_prefix),
+        ]),
         body,
     )
 
