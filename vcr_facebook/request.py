@@ -43,6 +43,13 @@ def make_before_record(elide_appsecret_proof,
         elider_prefix,
     )
 
+    input_token_filter = make_elider_filter(
+        'input_token',
+        elide_access_token and (
+            lambda q: elide_access_token(q['input_token'])),
+        elider_prefix,
+    )
+
     client_secret_filter = make_elider_filter(
         'client_secret',
         elide_client_secret and (
@@ -55,12 +62,15 @@ def make_before_record(elide_appsecret_proof,
             make_multipart_filter(filter_uploads),
             make_batch_relative_url_filter(appsecret_proof_filter),
             make_batch_relative_url_filter(access_token_filter),
+            make_batch_relative_url_filter(input_token_filter),
             make_batch_relative_url_filter(client_secret_filter),
             make_query_filter(appsecret_proof_filter),
             make_query_filter(access_token_filter),
+            make_query_filter(input_token_filter),
             make_query_filter(client_secret_filter),
             make_multipart_filter(appsecret_proof_filter),
             make_multipart_filter(access_token_filter),
+            make_multipart_filter(input_token_filter),
             make_multipart_filter(client_secret_filter),
         ]
         for f in filters:
